@@ -6,7 +6,7 @@
 
 # Installation
 
-* Download ZIP file from https://github.com/shawlab-moffitt/GeneralExpressionAnalysisApp
+* Download ZIP file from https://github.com/shawlab-moffitt/DRPPM-IntegrativeExpressionAnalysisApp
 * Unzip and load into directory as a project in R Studio
 * Open the ‘App.R’ script and write in user input files and options as directed at the top of the script
   * ‘App.R’ script begins with example files available on the front page and within the ExampleData Folder
