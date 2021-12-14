@@ -15,22 +15,22 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 #Example Files
 
-examp_file1.s <- "~/R/ShinyAppDev/data/ssGSEAscore_H_PeripheralBlood_Normal_Myeloid-DerivedSuppressorCell_29108995.tsv"
-examp_file2.s <- "~/R/ShinyAppDev/data/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
+examp_file1.s <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_Myeloid-DerivedSuppressorCell_29108995.tsv"
+examp_file2.s <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
 
-examp_file1.c <- "~/R/ShinyAppDev/data/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
-examp_file2.c <- "~/R/ShinyAppDev/data/FredHutch_TPM_filter_transpose.filteredchrY.protein.max_1FPKM.txt"
+examp_file1.c <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
+examp_file2.c <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/FredHutch_TPM_filter_transpose.filteredchrY.protein.max_1FPKM.txt"
 
-examp_file3.R <- "~/R/ShinyAppDev/data/htseq_gene_level_fpkm_T_geneName_max_1cutoff_v2.txt"
-examp_file3.RM <- "~/R/ShinyAppDev/data/USP7_meta.tsv"
-examp_file3.P <- "~/R/ShinyAppDev/data/USP7_shRNA_A_max_psm_matrix_geneName.txt"
-examp_file3.PM <- "~/R/ShinyAppDev/data/USP7_shRNA_A_meta.txt"
+examp_file3.R <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/htseq_gene_level_fpkm_T_geneName_max_1cutoff_v2.txt"
+examp_file3.RM <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/USP7_meta.tsv"
+examp_file3.P <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/USP7_shRNA_A_max_psm_matrix_geneName.txt"
+examp_file3.PM <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/USP7_shRNA_A_meta.txt"
 
 ##--file names--##
 #MSigDB GS and Category table
-MSigDBcat_file <- '~/R/ShinyAppDev/data/msigdb_gsNcat_HS.tsv'
+MSigDBcat_file <- '~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/msigdb_gsNcat_HS.tsv'
 #gene set list for ssGSEA
-GSlist_file <- '~/R/ShinyAppDev/data/gs_list_HS.RData'
+GSlist_file <- '~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/gs_list_HS.RData'
 
 ##--read files--##
 #MSigDB gene sets FOR UI
