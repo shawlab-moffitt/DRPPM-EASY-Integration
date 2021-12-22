@@ -20,23 +20,13 @@
 
 # R Dependencies
 
-* shiny_1.6.0
-* shinythemes_1.2.0
-* shinyjqui_0.4.0
-* RColorBrewer_1.1-2
-* clusterProfiler_4.0.5
-* dplyr_1.0.7
-* DT_0.18
-* enrichplot_1.12.2
-* shinycssloaders_1.0.0
-* ggplot2_3.3.5
-* ggpubr_0.4.0
-* reshape2_1.4.4
-* plotly_4.9.4.1
-* readr_2.0.1
-* limma_3.48.3
-* ggrepel_0.9.1
-* tidyr_1.1.3
+|  |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| shiny_1.6.0 | shinythemes_1.2.0 | shinyjqui_0.4.0 | shinycssloaders_1.0.0 | stringi_1.7.6 |
+| dplyr_1.0.7 | tidyr_1.1.3 | readr_2.0.1 | stringr_1.4.0 | DT_0.18 |
+| ggplot2_3.3.5 | plotly_4.9.4.1 | enrichplot_1.12.2 | ggVennDiagram_1.2.0 | ggrepel_0.9.1 |
+| rhoR_1.3.0.3 | limma_3.48.3 | clusterProfiler_4.0.5 | limma_3.48.3 | GSVA_1.40.1 |
+| BiocManager_1.30.16 | reshape2_1.4.4 | ggpubr_0.4.0 |  |  |
 
 # Required Files
 
