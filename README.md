@@ -1,4 +1,4 @@
-# DRPPM - Integrative Expression Analysis App
+# DRPPM - EASY - Integration
 
 # Introduction
 
