@@ -125,7 +125,7 @@ ui <-
                                             choices = c("spearman","pearson","kendall")),
                                 numericInput("cor_cutoff", "Correlation Cutoff", value = 0.3, min = 0),
                                 h3("Download Correlation Table"),
-                                textInput("userFileName_cor", "Download .tsv"),
+                                textInput("userFileName_cor", "File Name for Download:"),
                                 downloadButton("CorTableDownload", "Download .tsv")
                             ),
                             mainPanel(
