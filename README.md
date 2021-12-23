@@ -6,11 +6,12 @@
 
 # Installation
 
-* Download ZIP file from https://github.com/shawlab-moffitt/DRPPM-IntegrativeExpressionAnalysisApp
+* Download ZIP file from https://github.com/shawlab-moffitt/DRPPM-EASY-Integration
 * Unzip and load into directory as a project in R Studio
 * Open the ‘App.R’ script and write in user input files and options as directed at the top of the script
   * ‘App.R’ script begins with example files available on the front page and within the ExampleData Folder
 * Press ‘Run App’ button in R Studio to run in application or browser window and enjoy!
+  * The app script will install any missing packages that the user may not have locally
 
 
 # Requirments
@@ -31,16 +32,32 @@
 # Required Files
 
 * **MSigDB Gene Set Names:**
+  * These [gene set files](https://github.com/shawlab-moffitt/DRPPM-EASY-Integration/tree/main/GeneSets) were gathered from the [Molecular Signatures Database (MSigDB)](http://www.gsea-msigdb.org/gsea/msigdb/index.jsp) as separate collections and processed through R to generate a master gene set file with catagorical labels to use for GSEA and ssGSEA analysis.
+  * This is used mainly for the UI for gmt category selection.
 * **MSigDB Gene Set RData List:**
+  * The RData gene set list is a more refined format of the gene set table.
+  * This is a named list with over 32,000 gene sets from MSigDB paired with the genes they consist of.
+  * This list is used for the back end analysis.
 
 # App Features
 
-## ssGSEA Gene Set Comparison
+## Scatter Plot Comparison
 
 
 
-## Correlation Ranking
+## Ranked Feature Correlation
 
 
 
 ## Matrix Comparison with Reciprical GSEA
+
+
+
+# Future Enhancments
+
+
+
+# Questions and Comments
+
+Please email Alyssa Obermayer at alyssa.obermayer@moffitt.org if you have any further comments or questions in regards to the R Shiny Application.
+
