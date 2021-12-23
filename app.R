@@ -3,34 +3,41 @@
 ####----Install and load packages----####
 
 packages <- c("shiny","shinythemes","shinyjqui","RColorBrewer","stringi","rhoR","ggrepel",
-              "dplyr","DT","ggplot2","ggpubr","plotly","clusterProfiler","GSVA","ggVennDiagram",
-              "readr","limma","tidyr","stringr","shinycssloaders","enrichplot","reshape2","data.table")
+              "dplyr","DT","ggplot2","ggpubr","plotly","ggVennDiagram",
+              "readr","tidyr","stringr","shinycssloaders","reshape2","data.table")
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {
     install.packages(packages[!installed_packages])
 }
+#bioconductor packages
+bioCpacks <- c("clusterProfiler","GSVA","limma","enrichplot")
+installed_packages_BIOC <- bioCpacks %in% rownames(installed.packages())
+if (any(installed_packages_BIOC == FALSE)) {
+    BiocManager::install(bioCpacks[!installed_packages_BIOC], ask = F)
+}
 
 invisible(lapply(packages, library, character.only = TRUE))
+invisible(lapply(bioCpacks, library, character.only = TRUE))
 
 
 #Example Files
 
-examp_file1.s <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_Myeloid-DerivedSuppressorCell_29108995.tsv"
-examp_file2.s <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
+examp_file1.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_Myeloid-DerivedSuppressorCell_29108995.tsv"
+examp_file2.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
 
-examp_file1.c <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
-examp_file2.c <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/FredHutch_TPM_filter_transpose.filteredchrY.protein.max_1FPKM.txt"
+examp_file1.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
+examp_file2.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/FredHutch_TPM_filter_transpose.filteredchrY.protein.max_1FPKM.txt"
 
-examp_file3.R <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/htseq_gene_level_fpkm_T_geneName_max_1cutoff_v2.txt"
-examp_file3.RM <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/USP7_meta.tsv"
-examp_file3.P <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/USP7_shRNA_A_max_psm_matrix_geneName.txt"
-examp_file3.PM <- "~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/ExampleData/USP7_shRNA_A_meta.txt"
+examp_file3.R <- "~/R/DRPPM-EASY-Integration-main/ExampleData/htseq_gene_level_fpkm_T_geneName_max_1cutoff_v2.txt"
+examp_file3.RM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_meta.tsv"
+examp_file3.P <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_shRNA_A_max_psm_matrix_geneName.txt"
+examp_file3.PM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_shRNA_A_meta.txt"
 
 ##--file names--##
 #MSigDB GS and Category table
-MSigDBcat_file <- '~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/msigdb_gsNcat_HS.tsv'
+MSigDBcat_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/msigdb_gsNcat_HS.tsv'
 #gene set list for ssGSEA
-GSlist_file <- '~/R/DRPPM-IntegrativeExpressionAnalysisApp-main/gs_list_HS.RData'
+GSlist_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/gs_list_HS.RData'
 
 ##--read files--##
 #MSigDB gene sets FOR UI
@@ -57,7 +64,7 @@ shinytheme("sandstone")
 
 ui <-
     
-    navbarPage("{ Scatter Plot Analysis }",
+    navbarPage("{ Integrative Expression Analysis }",
                
                ####----Intro Tab----####
                
@@ -128,7 +135,7 @@ ui <-
                         )
                ),
                
-               ####----RNA v Protein Scatter Plot----####
+               ####----RNA v Protein----####
                
                tabPanel("Matrix Comparison",
                         fluidPage(
@@ -142,24 +149,25 @@ ui <-
                                                  uiOutput("groupBselec"),
                                                  h4("Gene Selection:"),
                                                  uiOutput("GeneSelec"),
-                                                 textInput("gsSelection2", "Text Input of Genes (space or tab delimited):", value = "")
+                                                 textInput("gsSelection2", "Text Input of Genes (space or tab delimited):", value = ""),
+                                                 uiOutput("hover_info")
                                 ),
                                 #GSEA tab selected
                                 conditionalPanel(condition = "input.MATS == '3'",
-                                                 h4("Group Selection"),
+                                                 h4("Group Selection:"),
                                                  uiOutput("groupAselec2"),
                                                  uiOutput("groupBselec2"),
-                                                 h4("Gene Set Analysis Parameters"),
+                                                 h4("Gene Set Analysis Parameters:"),
                                                  numericInput("GSnumber","Number of Top Genes for Gene Set Creation",
                                                               min = 5, value = 100),
                                                  numericInput("gseaPCutt", "P-Value Cutoff:", value = 1.0)
                                 ),
                                 #ssGSEA Box Plot tab selected
                                 conditionalPanel(condition = "input.MATS == '4'",
-                                                 h4("Group Selection"),
+                                                 h4("Group Selection:"),
                                                  uiOutput("groupAselec4"),
                                                  uiOutput("groupBselec4"),
-                                                 h4("Gene Set Analysis Parameters"),
+                                                 h4("Gene Set Analysis Parameters:"),
                                                  numericInput("GSnumber2","Number of Top Genes for Gene Set Creation",
                                                               min = 5, value = 100),
                                                  numericInput("gseaPCutt2", "P-Value Cutoff:", value = 1.0),
@@ -167,7 +175,7 @@ ui <-
                                                              choices = c("ssgsea","gsva","zscore","plage"))),
                                 #Venndiagram tab selected
                                 conditionalPanel(condition = "input.MATS == '5'",
-                                                 h4("Group Selection"),
+                                                 h4("Group Selection:"),
                                                  uiOutput("groupAselec3"),
                                                  uiOutput("groupBselec3"),
                                                  h4("Significance Thresholds:"),
@@ -200,20 +208,22 @@ ui <-
                                                                 h4("Matrix 1"),
                                                                 textInput("MAT1name","Matrix 1 Name:", value = "Matrix1"),
                                                                 fileInput("RNAexp_F", "Matrix 1 File Upload", accept = c(".tsv",".txt",".csv")),
-                                                                checkboxInput("RNAheader","Check if Header in Matrix 1 meta"),
+                                                                checkboxInput("RNAheader","Check if Header in Matrix 1 meta", value = T),
                                                                 fileInput("RNAmeta_F", "Matrix 1 Meta File", accept = c(".tsv",".txt",".csv"))
                                                          ),
                                                          column(6,
                                                                 h4("Matrix 2"),
                                                                 textInput("MAT2name","Matrix 2 Name:", value = "Matrix2"),
                                                                 fileInput("PROTexp_F", "Matrix 2 File Upload", accept = c(".tsv",".txt",".csv")),
-                                                                checkboxInput("PROTheader","Check if Header in Matrix 2 meta"),
+                                                                checkboxInput("PROTheader","Check if Header in Matrix 2 meta", value = T),
                                                                 fileInput("PROTmeta_F", "Matrix 2 Meta File", accept = c(".tsv",".txt",".csv"))
                                                          )
                                                      ),
                                                      value = 1),
                                             tabPanel("Scatter Plot",
-                                                     withSpinner(jqui_resizable(plotlyOutput("RNAvPROTscatter", height = "600px")), type = 6),
+                                                     withSpinner(jqui_resizable(plotOutput("RNAvPROTscatter", height = "600px",
+                                                                                           hover = hoverOpts("plot_hover", delay = 10, delayType = "debounce"))), type = 6),
+                                                     #uiOutput("hover_info"),
                                                      DT::dataTableOutput("RNAvPROTtable"),
                                                      downloadButton("logFCtableDownload", "Download .tsv"),
                                                      value = 2),
@@ -284,53 +294,6 @@ ui <-
 
 
 
-
-####----Install and load packages----####
-
-packages <- c("shiny","shinythemes","shinyjqui","RColorBrewer","stringi","rhoR","ggrepel",
-              "dplyr","DT","ggplot2","ggpubr","plotly","clusterProfiler","GSVA","ggVennDiagram",
-              "readr","limma","tidyr","stringr","shinycssloaders","enrichplot","reshape2","data.table")
-installed_packages <- packages %in% rownames(installed.packages())
-if (any(installed_packages == FALSE)) {
-    install.packages(packages[!installed_packages])
-}
-
-invisible(lapply(packages, library, character.only = TRUE))
-
-
-#Example Files
-
-examp_file1.s <- "~/R/ShinyAppDev/data/ssGSEAscore_H_PeripheralBlood_Normal_Myeloid-DerivedSuppressorCell_29108995.tsv"
-examp_file2.s <- "~/R/ShinyAppDev/data/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
-
-examp_file1.c <- "~/R/ShinyAppDev/data/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
-examp_file2.c <- "~/R/ShinyAppDev/data/FredHutch_TPM_filter_transpose.filteredchrY.protein.max_1FPKM.txt"
-
-examp_file3.R <- "~/R/ShinyAppDev/data/htseq_gene_level_fpkm_T_geneName_max_1cutoff_v2.txt"
-examp_file3.RM <- "~/R/ShinyAppDev/data/USP7_meta.tsv"
-examp_file3.P <- "~/R/ShinyAppDev/data/USP7_shRNA_A_max_psm_matrix_geneName.txt"
-examp_file3.PM <- "~/R/ShinyAppDev/data/USP7_shRNA_A_meta.txt"
-
-
-##--file names--##
-#MSigDB GS and Category table
-MSigDBcat_file <- '~/R/ShinyAppDev/data/msigdb_gsNcat_HS.tsv'
-#gene set list for ssGSEA
-GSlist_file <- '~/R/ShinyAppDev/data/gs_list_HS.RData'
-
-##--read files--##
-#MSigDB gene sets FOR UI
-MSigDBcat <- read.delim(MSigDBcat_file, header = T, sep = '\t')
-#gene set list for ssGSEA
-load(GSlist_file)
-
-##--reformat for UI--##
-#subset category names
-MSigDBcat2 <- MSigDBcat[,-3]
-MSigDBcat3 <- unique(MSigDBcat2)
-rownames(MSigDBcat3) <- 1:nrow(MSigDBcat3)
-colnames(MSigDBcat3) <- c("MSigDB Categories","MSigDB Sub-Categories")
-
 ####----Server----####
 
 #increase file upload size
@@ -359,10 +322,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupAcomp", "Comparison Group A:",
-                    choices = metagroups[1])
+                    choices = metagroups, selected = metagroups[1])
         
     })
     
@@ -371,10 +335,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupBcomp", "Comparison Group B:",
-                    choices = metagroups[2])
+                    choices = metagroups, selected = metagroups[2])
         
     })
     
@@ -383,10 +348,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupAcomp2", "Comparison Group A:",
-                    choices = metagroups[1])
+                    choices = metagroups, selected = metagroups[1])
         
     })
     
@@ -395,10 +361,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupBcomp2", "Comparison Group B:",
-                    choices = metagroups[2])
+                    choices = metagroups, selected = metagroups[2])
         
     })
     
@@ -407,10 +374,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupAcomp3", "Comparison Group A:",
-                    choices = metagroups[1])
+                    choices = metagroups, selected = metagroups[1])
         
     })
     
@@ -419,10 +387,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupBcomp3", "Comparison Group B:",
-                    choices = metagroups[2])
+                    choices = metagroups, selected = metagroups[2])
         
     })
     
@@ -431,10 +400,11 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupAcomp4", "Comparison Group A:",
-                    choices = metagroups[1])
+                    choices = metagroups, selected = metagroups[1])
         
     })
     
@@ -443,8 +413,9 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         selectInput("groupBcomp4", "Comparison Group B:",
                     choices = metagroups[2])
         
@@ -494,8 +465,9 @@ server <- function(input, output, session) {
         
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroups <- as.vector(levels(factor(metasame[,2])))
+        #metasame <- merge(metaR,metaP)
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
         #boxplot choices based on meta groups
         if (length(metagroups) == 2) {
             boxopt <- c("wilcox.test", "t.test", "none")
@@ -529,6 +501,26 @@ server <- function(input, output, session) {
         req(input$GMTcomp)
         h4("Download Statistics Table:")
         
+    })
+    
+    output$hover_info <- renderUI({
+        FCtable <- RNAvProtFC()
+        M1 <- input$MAT1name
+        M2 <- input$MAT2name
+        #get delta
+        FCtable$Delta_M1M2 <- FCtable[,2] - FCtable[,3]
+        #edit column names for hover text to find
+        colnames(FCtable) <- c("gene","log2FC_M1","log2FC_M2","DeltaLog2FC")
+        hover <- input$plot_hover
+        point <- nearPoints(FCtable, hover, threshold = 10, maxpoints = 1, addDist = FALSE)
+        if (nrow(point) == 0) return(NULL)
+        wellPanel(
+            p(HTML(paste0("<b> Gene: </b>", point[1], "<br/>",
+                          "<b> ",M1," Log2FC: </b>", round(point[2], digits = 4), "<br/>",
+                          "<b> ",M2," Log2FC: </b>", round(point[3], digits = 4), "<br/>",
+                          "<b> Delta Log2FC Between ",M1," and ",M2,": </b>", round(point[4], digits = 4), "<br/>",
+                          NULL
+            ))))
     })
     
     
@@ -734,14 +726,17 @@ server <- function(input, output, session) {
         prot <- PROTmat()
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        A <- metasame[,1][metasame[,2] == input$groupAcomp]
-        B <- metasame[,1][metasame[,2] == input$groupBcomp]
+        #metasame <- merge(metaR,metaP)
+        A1 <- metaR[which(metaR[,2] == input$groupAcomp),1]
+        B1 <- metaR[which(metaR[,2] == input$groupBcomp),1]
+        
+        A2 <- metaP[which(metaP[,2] == input$groupAcomp),1]
+        B2 <- metaP[which(metaP[,2] == input$groupBcomp),1]
         
         #RNAseq top table generation
-        mat <- RNA[,c(A,B)]
+        mat <- RNA[,c(A1,B1)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -751,9 +746,9 @@ server <- function(input, output, session) {
         top1_R <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
         
         #Protein top table generation
-        mat <- prot[,c(A,B)]
+        mat <- prot[,c(A2,B2)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -786,16 +781,19 @@ server <- function(input, output, session) {
         prot <- PROTmat()
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroupsR <- as.vector(levels(factor(metaR[,2])))
-        metagroupsP <- as.vector(levels(factor(metaP[,2])))
-        A <- metasame[,1][metasame[,2] == input$groupAcomp2]
-        B <- metasame[,1][metasame[,2] == input$groupBcomp2]
+        #metasame <- merge(metaR,metaP)
+        #metagroupsR <- as.vector(levels(factor(metaR[,2])))
+        #metagroupsP <- as.vector(levels(factor(metaP[,2])))
+        A1 <- metaR[which(metaR[,2] == input$groupAcomp2),1]
+        B1 <- metaR[which(metaR[,2] == input$groupBcomp2),1]
+        
+        A2 <- metaP[which(metaP[,2] == input$groupAcomp2),1]
+        B2 <- metaP[which(metaP[,2] == input$groupBcomp2),1]
         
         #RNAseq top table generation
-        mat <- RNA[,c(A,B)]
+        mat <- RNA[,c(A1,B1)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -805,9 +803,9 @@ server <- function(input, output, session) {
         top1_R <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
         
         #Protein top table generation
-        mat <- prot[,c(A,B)]
+        mat <- prot[,c(A2,B2)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -852,9 +850,10 @@ server <- function(input, output, session) {
         #prot <- as.matrix(PROTmat())
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        groupA <- metasame[,1][metasame[,2] == input$groupAcomp2]
-        groupB <- metasame[,1][metasame[,2] == input$groupBcomp2]
+        #metasame <- merge(metaR,metaP)
+        #metasame <- intersect(metaR[,2],metaP[,2])
+        groupA <- metaR[which(metaR[,2] == input$groupAcomp2),1]
+        groupB <- metaR[which(metaR[,2] == input$groupBcomp2),1]
         gmt <- recGMT()
         ##----Signal-to-Noise Calculation----##
         A <- A + 0.00000001
@@ -910,9 +909,10 @@ server <- function(input, output, session) {
         A <- as.matrix(PROTmat())
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        groupA <- metasame[,1][metasame[,2] == input$groupAcomp2]
-        groupB <- metasame[,1][metasame[,2] == input$groupBcomp2]
+        #metasame <- merge(metaR,metaP)
+        #metasame <- intersect(metaR[,2],metaP[,2])
+        groupA <- metaP[which(metaP[,2] == input$groupAcomp2),1]
+        groupB <- metaP[which(metaP[,2] == input$groupBcomp2),1]
         gmt <- recGMT()
         ##----Signal-to-Noise Calculation----##
         A <- A + 0.00000001
@@ -969,16 +969,19 @@ server <- function(input, output, session) {
         prot <- PROTmat()
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroupsR <- as.vector(levels(factor(metaR[,2])))
-        metagroupsP <- as.vector(levels(factor(metaP[,2])))
-        A <- metasame[,1][metasame[,2] == input$groupAcomp4]
-        B <- metasame[,1][metasame[,2] == input$groupBcomp4]
+        #metasame <- merge(metaR,metaP)
+        #metagroupsR <- as.vector(levels(factor(metaR[,2])))
+        #metagroupsP <- as.vector(levels(factor(metaP[,2])))
+        A1 <- metaR[which(metaR[,2] == input$groupAcomp4),1]
+        B1 <- metaR[which(metaR[,2] == input$groupBcomp4),1]
+        
+        A2 <- metaP[which(metaP[,2] == input$groupAcomp4),1]
+        B2 <- metaP[which(metaP[,2] == input$groupBcomp4),1]
         
         #RNAseq top table generation
-        mat <- RNA[,c(A,B)]
+        mat <- RNA[,c(A1,B1)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -988,9 +991,9 @@ server <- function(input, output, session) {
         top1_R <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
         
         #Protein top table generation
-        mat <- prot[,c(A,B)]
+        mat <- prot[,c(A2,B2)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -1063,11 +1066,13 @@ server <- function(input, output, session) {
         #meta info
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
+        #metasame <- merge(metaR,metaP)
+        #metasame <- intersect(metaR[,2],metaP[,2])
         #meta types - no white space
         T1 <- gsub(" ","",input$groupAcomp4)
         T2 <- gsub(" ","",input$groupBcomp4)
-        samporder <- metasame[,1]
+        samporder1 <- metaR[,1]
+        samporder2 <- metaP[,1]
         M1 <- input$MAT1name
         M2 <- input$MAT2name
         #ssgsea results
@@ -1076,10 +1081,10 @@ server <- function(input, output, session) {
         
         #table from M1
         ssgseaM1_2 <- as.data.frame(t(ssgseaM1))
-        ssgseaM1_3 <- as.data.frame(ssgseaM1_2[samporder,])
+        ssgseaM1_3 <- as.data.frame(ssgseaM1_2[samporder1,])
         ssgseaM1_4 <- ssgseaM1_3 %>% 
             mutate(type = case_when(
-                rownames(ssgseaM1_3) == metasame[,1] ~ metasame[,2],
+                rownames(ssgseaM1_3) == metaR[,1] ~ metaR[,2],
             ))
         ssgseaM1_4 <- ssgseaM1_4 %>%
             relocate(type)
@@ -1089,10 +1094,10 @@ server <- function(input, output, session) {
         
         #table from M2
         ssgseaM2_2 <- as.data.frame(t(ssgseaM2))
-        ssgseaM2_3 <- as.data.frame(ssgseaM2_2[samporder,])
+        ssgseaM2_3 <- as.data.frame(ssgseaM2_2[samporder2,])
         ssgseaM2_4 <- ssgseaM2_3 %>% 
             mutate(type = case_when(
-                rownames(ssgseaM2_3) == metasame[,1] ~ metasame[,2],
+                rownames(ssgseaM2_3) == metaP[,1] ~ metaP[,2],
             ))
         ssgseaM2_4 <- ssgseaM2_4 %>%
             relocate(type)
@@ -1195,6 +1200,7 @@ server <- function(input, output, session) {
         FCtable <- RNAvProtFC()
         M1 <- input$MAT1name
         M2 <- input$MAT2name
+        colnames(FCtable)[c(2,3)] <- c(paste("Log2FC_",M1,sep = ""),paste("Log2FC_",M2,sep = ""))
         #get delta
         FCtable$Delta_M1M2 <- FCtable[,2] - FCtable[,3]
         colnames(FCtable)[4] <- paste("Delta",M1,M2,sep = "_")
@@ -1386,18 +1392,20 @@ server <- function(input, output, session) {
             M2 <- PROTmat()
             meta1 <- RNAmeta()
             meta2 <- PROTmeta()
-            metasame <- merge(meta1,meta2)
-            A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-            B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+            #metasame <- merge(meta1,meta2)
+            A1 <- meta1[which(meta1[,2] == input$groupAcomp3),1]
+            B1 <- meta1[which(meta1[,2] == input$groupBcomp3),1]
+            A2 <- meta2[which(meta2[,2] == input$groupAcomp3),1]
+            B2 <- meta2[which(meta2[,2] == input$groupBcomp3),1]
             
             #Assign user given matrix names for labeling
             M1Name <- input$MAT1name
             M2Name <- input$MAT2name
             
             #Matrix 1 top table generation
-            mat <- M1[,c(A,B)]
+            mat <- M1[,c(A1,B1)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -1407,9 +1415,9 @@ server <- function(input, output, session) {
             top1_1 <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
             
             #Matrix 2 top table generation
-            mat <- M2[,c(A,B)]
+            mat <- M2[,c(A2,B2)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -1652,18 +1660,20 @@ server <- function(input, output, session) {
             M2 <- PROTmat()
             meta1 <- RNAmeta()
             meta2 <- PROTmeta()
-            metasame <- merge(meta1,meta2)
-            A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-            B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+            #metasame <- merge(meta1,meta2)
+            A1 <- meta1[which(meta1[,2] == input$groupAcomp3),1]
+            B1 <- meta1[which(meta1[,2] == input$groupBcomp3),1]
+            A2 <- meta2[which(meta2[,2] == input$groupAcomp3),1]
+            B2 <- meta2[which(meta2[,2] == input$groupBcomp3),1]
             
             #Assign user given matrix names for labeling
             M1Name <- input$MAT1name
             M2Name <- input$MAT2name
             
             #Matrix 1 top table generation
-            mat <- M1[,c(A,B)]
+            mat <- M1[,c(A1,B1)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -1673,9 +1683,9 @@ server <- function(input, output, session) {
             top1_1 <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
             
             #Matrix 2 top table generation
-            mat <- M2[,c(A,B)]
+            mat <- M2[,c(A2,B2)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -1852,18 +1862,18 @@ server <- function(input, output, session) {
             #convert to data frame
             StatData.df <- do.call(rbind.data.frame, StatDataList)
             rownames(StatData.df) <- names(StatDataList)
-            #assign column names
-            colnames(StatData.df) <- c("Number_of_DEGenes_in_GeneSet",
-                                       paste(M1Name,"_UpRegulated_Pvalue",sep = ""),paste(M2Name,"_UpRegulated_Pvalue",sep = ""),
-                                       paste(M1Name,"_DownRegulated_Pvalue",sep = ""),paste(M2Name,"_DownRegulated_Pvalue",sep = ""),
-                                       paste(M1Name,"_UpRegulated_OddsRatio",sep = ""),paste(M2Name,"_UpRegulated_OddsRatio",sep = ""),
-                                       paste(M1Name,"_DownRegulated_OddsRatio",sep = ""),paste(M2Name,"_DownRegulated_OddsRatio",sep = ""),
-                                       paste(M1Name,"_UpRegulated_KappaScore",sep = ""),paste(M2Name,"_UpRegulated_KappaScore",sep = ""),
-                                       paste(M1Name,"_DownRegulated_KappaScore",sep = ""),paste(M2Name,"_DownRegulated_KappaScore",sep = ""),
-                                       paste(M1Name,"_UpRegulated_JaccardIndex",sep = ""),paste(M2Name,"_UpRegulated_JaccardIndex",sep = ""),
-                                       paste(M1Name,"_DownRegulated_JaccardIndex",sep = ""),paste(M2Name,"_DownRegulated_JaccardIndex",sep = ""),
-                                       paste(M1Name,"_UpRegulated_Matrix",sep = ""),paste(M2Name,"_UpRegulated_Matrix",sep = ""),
-                                       paste(M1Name,"_DownRegulated_Matrix",sep = ""),paste(M2Name,"_DownRegulated_Matrix",sep = ""))
+            #spaces in the name allow for them to be wrapped in the column names
+            colnames(StatData.df) <- c("Number of DEGs in GeneSet",
+                                       paste(M1Name," UpRegulated Pvalue",sep = ""),paste(M2Name," UpRegulated Pvalue",sep = ""),
+                                       paste(M1Name," DownRegulated Pvalue",sep = ""),paste(M2Name," DownRegulated Pvalue",sep = ""),
+                                       paste(M1Name," UpRegulated OddsRatio",sep = ""),paste(M2Name," UpRegulated OddsRatio",sep = ""),
+                                       paste(M1Name," DownRegulated OddsRatio",sep = ""),paste(M2Name," DownRegulated OddsRatio",sep = ""),
+                                       paste(M1Name," UpRegulated KappaScore",sep = ""),paste(M2Name," UpRegulated KappaScore",sep = ""),
+                                       paste(M1Name," DownRegulated KappaScore",sep = ""),paste(M2Name," DownRegulated KappaScore",sep = ""),
+                                       paste(M1Name," UpRegulated JaccardIndex",sep = ""),paste(M2Name," UpRegulated JaccardIndex",sep = ""),
+                                       paste(M1Name," DownRegulated JaccardIndex",sep = ""),paste(M2Name," DownRegulated JaccardIndex",sep = ""),
+                                       paste(M1Name," UpRegulated Contingency Table",sep = ""),paste(M2Name," UpRegulated Contingency Table",sep = ""),
+                                       paste(M1Name," DownRegulated Contingency Table",sep = ""),paste(M2Name," DownRegulated Contingency Table",sep = ""))
             #make labeled column for rownames
             StatData.df$GeneSets <- rownames(StatData.df)
             StatData.df <- StatData.df %>%
@@ -1944,7 +1954,7 @@ server <- function(input, output, session) {
                              color = Type,
                              text = paste("</br> Type: ", Type,
                                           paste("</br> ",colnames(tsv)[1],": ", sep = ""),tsv[,1]))) +
-            geom_point() +
+            geom_point(colour = "lightgray") +
             theme_minimal() +
             labs(x = gs_x, y = gs_y,
                  title = paste(gs_x, " vs.\n", gs_y, sep = ''))
@@ -2002,7 +2012,7 @@ server <- function(input, output, session) {
     })
     
     #render RNAseq vs Protein scatter plot
-    output$RNAvPROTscatter <- renderPlotly({
+    output$RNAvPROTscatter <- renderPlot({
         
         req(input$RNAexp_F,input$RNAmeta_F,input$PROTexp_F,input$PROTmeta_F)
         FCtable <- RNAvProtFC()
@@ -2022,43 +2032,42 @@ server <- function(input, output, session) {
             highlight2 <- FCtable %>%
                 filter(gene %in% genesel.text)
             highlight <- rbind(highlight1,highlight2)
-            p <- ggplot(FCtable, aes(x = FCtable[,2], y = FCtable[,3],
-                                     text = paste("</br> Gene: ", FCtable[,1],
-                                                  paste("</br> ",input$MAT1name," log2FC: ",sep = ''), round(FCtable[,2], digits = 4),
-                                                  paste("</br> ",input$MAT2name," log2FC: ",sep = ''), round(FCtable[,3], digits = 4)))) +
-                geom_point(color = "gray48") +
+            #edit column names for hover text to find
+            colnames(FCtable) <- c("gene","log2FC_M1","log2FC_M2")
+            #generate plot
+            p <- ggplot(FCtable, aes(x = log2FC_M1, y = log2FC_M2)) +
+                geom_point(color = "lightgray") +
                 theme_minimal() +
-                labs(x = paste("log2FC", input$MAT1name), y = paste("log2FC", input$MAT2name))
+                labs(x = paste("log2FC_", input$MAT1name, sep = ""), y = paste("log2FC_", input$MAT2name, sep = ""))
             #Color selected points
             p <- p +
                 geom_point(data = highlight,
-                           aes(x = highlight[,2], y = highlight[,3],
-                               text = paste("</br> Gene: ", highlight[,1],
-                                            paste("</br> ",input$MAT1name," log2FC: ",sep = ''), round(highlight[,2], digits = 4),
-                                            paste("</br> ",input$MAT2name," log2FC: ",sep = ''), round(highlight[,3], digits = 4))),
+                           aes(x = highlight[,2], y = highlight[,3]),
                            color = "darkred",
                            size = 2)
             p <- p +
-                geom_text(data =  highlight,
-                          aes(x = highlight[,2], y = highlight[,3],
-                              label = highlight[,1], fontface = "bold",
-                              text = paste("</br> Gene: ", highlight[,1],
-                                           paste("</br> ",input$MAT1name," log2FC: ",sep = ''), round(highlight[,2], digits = 4),
-                                           paste("</br> ",input$MAT2name," log2FC: ",sep = ''), round(highlight[,3], digits = 4))),
-                          check_overlap = T,
-                          nudge_y = 0.06,
-                          nudge_x = 0.2)
-            ggplotly(p, tooltip = "text")
+                geom_text_repel(data = highlight,
+                                aes(label = highlight[,1], x = highlight[,2], y = highlight[,3]),
+                                size = 6,
+                                color="black",
+                                nudge_x = 0.1,
+                                nudge_y=0.1,
+                                box.padding = unit(0.9, "lines"),
+                                point.padding = unit(.3+4*0.1, "lines"),
+                                max.overlaps = 50)
+            #show plot
+            p
+            
         }
         else {
-            p <- ggplot(FCtable, aes(x = FCtable[,2], y = FCtable[,3],
-                                     text = paste("</br> Gene: ", gene,
-                                                  paste("</br> ",input$MAT1name," log2FC: ",sep = ''), round(FCtable[,2], digits = 4),
-                                                  paste("</br> ",input$MAT2name," log2FC: ",sep = ''), round(FCtable[,3], digits = 4)))) +
-                geom_point(color = "gray48") +
+            #edit column names for hover text to find
+            colnames(FCtable) <- c("gene","log2FC_M1","log2FC_M2")
+            p <- ggplot(FCtable, aes(x = log2FC_M1, y = log2FC_M2)) +
+                geom_point(color = "lightgray") +
                 theme_minimal() +
-                labs(x = paste("log2FC", input$MAT1name), y = paste("log2FC", input$MAT2name))
-            ggplotly(p, tooltip = "text")
+                labs(x = paste("log2FC_", input$MAT1name, sep = ""), y = paste("log2FC_", input$MAT2name, sep = ""))
+            #show plot
+            p
         }
         
     })
@@ -2103,19 +2112,22 @@ server <- function(input, output, session) {
         prot <- PROTmat()
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroupsR <- as.vector(levels(factor(metaR[,2])))
-        metagroupsP <- as.vector(levels(factor(metaP[,2])))
-        A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-        B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
+        #metagroupsR <- as.vector(levels(factor(metaR[,2])))
+        #metagroupsP <- as.vector(levels(factor(metaP[,2])))
+        A1 <- metaR[which(metaR[,2] == input$groupAcomp3),1]
+        B1 <- metaR[which(metaR[,2] == input$groupBcomp3),1]
+        A2 <- metaP[which(metaP[,2] == input$groupAcomp3),1]
+        B2 <- metaP[which(metaP[,2] == input$groupBcomp3),1]
         #matrix names
         M1 <- input$MAT1name
         M2 <- input$MAT2name
         
         #RNAseq top table generation
-        mat <- RNA[,c(A,B)]
+        mat <- RNA[,c(A1,B1)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2125,9 +2137,9 @@ server <- function(input, output, session) {
         top1_R <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
         
         #Protein top table generation
-        mat <- prot[,c(A,B)]
+        mat <- prot[,c(A2,B2)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2145,9 +2157,9 @@ server <- function(input, output, session) {
         topGenes_PU <- top1_P[top1_P$logFC > FC & top1_P$adj.P.Val <= adjP,]
         
         #convert genes into gmt format
-        topGenes_RU_gmt <- data.frame(paste("UPreg_in_",gsub(" ","",metagroupsR[1]),"_",M1,sep = ""),rownames(topGenes_RU))
+        topGenes_RU_gmt <- data.frame(paste("UPreg_in_",gsub(" ","",metagroups[1]),"_",M1,sep = ""),rownames(topGenes_RU))
         colnames(topGenes_RU_gmt) <- c("term","gene")
-        topGenes_PU_gmt <- data.frame(paste("UPreg_in_",gsub(" ","",metagroupsP[1]),"_",M2,sep = ""),rownames(topGenes_PU))
+        topGenes_PU_gmt <- data.frame(paste("UPreg_in_",gsub(" ","",metagroups[1]),"_",M2,sep = ""),rownames(topGenes_PU))
         colnames(topGenes_PU_gmt) <- c("term","gene")
         
         #combine to 4 gene set list
@@ -2188,19 +2200,22 @@ server <- function(input, output, session) {
         prot <- PROTmat()
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        metagroupsR <- as.vector(levels(factor(metaR[,2])))
-        metagroupsP <- as.vector(levels(factor(metaP[,2])))
-        A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-        B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+        metasame <- intersect(metaR[,2],metaP[,2])
+        metagroups <- as.vector(levels(factor(metasame)))
+        #metagroupsR <- as.vector(levels(factor(metaR[,2])))
+        #metagroupsP <- as.vector(levels(factor(metaP[,2])))
+        A1 <- metaR[which(metaR[,2] == input$groupAcomp3),1]
+        B1 <- metaR[which(metaR[,2] == input$groupBcomp3),1]
+        A2 <- metaP[which(metaP[,2] == input$groupAcomp3),1]
+        B2 <- metaP[which(metaP[,2] == input$groupBcomp3),1]
         #matrix names
         M1 <- input$MAT1name
         M2 <- input$MAT2name
         
         #RNAseq top table generation
-        mat <- RNA[,c(A,B)]
+        mat <- RNA[,c(A1,B1)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2210,9 +2225,9 @@ server <- function(input, output, session) {
         top1_R <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
         
         #Protein top table generation
-        mat <- prot[,c(A,B)]
+        mat <- prot[,c(A2,B2)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2230,9 +2245,9 @@ server <- function(input, output, session) {
         topGenes_PD <- top1_P[top1_P$logFC < FC & top1_P$adj.P.Val <= adjP,]
         
         #convert genes into gmt format
-        topGenes_RD_gmt <- data.frame(paste("DNreg_in_",gsub(" ","",metagroupsR[1]),"_",M1,sep = ""),rownames(topGenes_RD))
+        topGenes_RD_gmt <- data.frame(paste("DNreg_in_",gsub(" ","",metagroups[1]),"_",M1,sep = ""),rownames(topGenes_RD))
         colnames(topGenes_RD_gmt) <- c("term","gene")
-        topGenes_PD_gmt <- data.frame(paste("DNreg_in_",gsub(" ","",metagroupsP[1]),"_",M2,sep = ""),rownames(topGenes_PD))
+        topGenes_PD_gmt <- data.frame(paste("DNreg_in_",gsub(" ","",metagroups[1]),"_",M2,sep = ""),rownames(topGenes_PD))
         colnames(topGenes_PD_gmt) <- c("term","gene")
         
         #combine to 4 gene set list
@@ -2365,17 +2380,19 @@ server <- function(input, output, session) {
         prot <- PROTmat()
         metaR <- RNAmeta()
         metaP <- PROTmeta()
-        metasame <- merge(metaR,metaP)
-        A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-        B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+        #metasame <- merge(metaR,metaP)
+        A1 <- metaR[which(metaR[,2] == input$groupAcomp3),1]
+        B1 <- metaR[which(metaR[,2] == input$groupBcomp3),1]
+        A2 <- metaP[which(metaP[,2] == input$groupAcomp3),1]
+        B2 <- metaP[which(metaP[,2] == input$groupBcomp3),1]
         #matrix names
         M1 <- input$MAT1name
         M2 <- input$MAT2name
         
         #RNAseq top table generation
-        mat <- RNA[,c(A,B)]
+        mat <- RNA[,c(A1,B1)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2385,9 +2402,9 @@ server <- function(input, output, session) {
         top1_R <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
         
         #Protein top table generation
-        mat <- prot[,c(A,B)]
+        mat <- prot[,c(A2,B2)]
         mat <- log2(mat + 1.0)
-        groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+        groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
         designA <- model.matrix(~0 + groupAOther)
         fit <- lmFit(mat, design = designA)
         contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2685,7 +2702,7 @@ server <- function(input, output, session) {
     output$StatExplan <- renderUI({
         
         #require user GMT input
-        req(input$GMTcomp)
+        #req(input$GMTcomp)
         M1 <- input$MAT1name
         M2 <- input$MAT2name
         HTML(paste("The table generated below displays statistical analyses from comparing differentially expressed genes (DEGs) from the given matrices with gene sets from the user provided GMT file.<br/>
@@ -2958,18 +2975,20 @@ server <- function(input, output, session) {
             M2 <- PROTmat()
             meta1 <- RNAmeta()
             meta2 <- PROTmeta()
-            metasame <- merge(meta1,meta2)
-            A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-            B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+            #metasame <- merge(meta1,meta2)
+            A1 <- meta1[which(meta1[,2] == input$groupAcomp3),1]
+            B1 <- meta1[which(meta1[,2] == input$groupBcomp3),1]
+            A2 <- meta2[which(meta2[,2] == input$groupAcomp3),1]
+            B2 <- meta2[which(meta2[,2] == input$groupBcomp3),1]
             
             #Assign user given matrix names for labeling
             M1Name <- input$MAT1name
             M2Name <- input$MAT2name
             
             #Matrix 1 top table generation
-            mat <- M1[,c(A,B)]
+            mat <- M1[,c(A1,B1)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -2979,9 +2998,9 @@ server <- function(input, output, session) {
             top1_1 <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
             
             #Matrix 2 top table generation
-            mat <- M2[,c(A,B)]
+            mat <- M2[,c(A2,B2)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -3215,18 +3234,20 @@ server <- function(input, output, session) {
             M2 <- PROTmat()
             meta1 <- RNAmeta()
             meta2 <- PROTmeta()
-            metasame <- merge(meta1,meta2)
-            A <- metasame[,1][metasame[,2] == input$groupAcomp3]
-            B <- metasame[,1][metasame[,2] == input$groupBcomp3]
+            #metasame <- merge(meta1,meta2)
+            A1 <- meta1[which(meta1[,2] == input$groupAcomp3),1]
+            B1 <- meta1[which(meta1[,2] == input$groupBcomp3),1]
+            A2 <- meta2[which(meta2[,2] == input$groupAcomp3),1]
+            B2 <- meta2[which(meta2[,2] == input$groupBcomp3),1]
             
             #Assign user given matrix names for labeling
             M1Name <- input$MAT1name
             M2Name <- input$MAT2name
             
             #Matrix 1 top table generation
-            mat <- M1[,c(A,B)]
+            mat <- M1[,c(A1,B1)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A1)), rep("B", length(B1))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -3236,9 +3257,9 @@ server <- function(input, output, session) {
             top1_1 <- topTable(fit2, coef = 1, n = 300000, sort = "p", p.value = 1.0, adjust.method = "BH")
             
             #Matrix 2 top table generation
-            mat <- M2[,c(A,B)]
+            mat <- M2[,c(A2,B2)]
             mat <- log2(mat + 1.0)
-            groupAOther <- factor(c(rep("A", length(A)), rep("B", length(B))))
+            groupAOther <- factor(c(rep("A", length(A2)), rep("B", length(B2))))
             designA <- model.matrix(~0 + groupAOther)
             fit <- lmFit(mat, design = designA)
             contrast.matrix <- makeContrasts(groupAOtherA - groupAOtherB, levels = designA)
@@ -3672,10 +3693,18 @@ server <- function(input, output, session) {
     output$logFCtableDownload <- downloadHandler(
         
         filename = function() {
-            paste("RNAvsProteinLogFC.tsv", sep = '')
+            M1 <- input$MAT1name
+            M2 <- input$MAT2name
+            paste(M1,"_",M2,"_ExprLogFC.tsv", sep = '')
         },
         content = function(file) {
             FCtable <- RNAvProtFC()
+            M1 <- input$MAT1name
+            M2 <- input$MAT2name
+            ##add difference column in df
+            FCtable$Delta_M1M2 <- FCtable[,2] - FCtable[,3]
+            colnames(FCtable)[4] <- paste("Delta_",M1,"_",M2,sep = "")
+            colnames(FCtable)[c(2,3)] <- c(paste("Log2FC_",M1,sep = ""),paste("Log2FC_",M2,sep = ""))
             write_tsv(FCtable, file)
         }
     )
@@ -3732,11 +3761,8 @@ server <- function(input, output, session) {
 
 
 
-
-
-
-
-
-
 # Run the application 
 shinyApp(ui = ui, server = server)
+
+
+
