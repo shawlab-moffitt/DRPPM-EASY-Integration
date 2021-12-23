@@ -43,6 +43,15 @@
 
 ## Scatter Plot Comparison
 
+![alt text](https://github.com/shawlab-moffitt/DRPPM-EASY-Integration/blob/main/App_Demo_Pictures/EASY_INT_Scatter.png?raw=true)
+
+1. The user may upload teo files gathered from [ssGSEA analysis](https://github.com/shawlab-moffitt/DRPPM-EASY-ExprAnalysisShinY#singer-sample-gsea-box-plot) in the main DRPPM-EASY app to compare 
+   * In theory, the plot gathers values from the third column in both of the files uploaded as long as the first two columns are the same. So as long as the data follows this format a plot should be generated.
+     * More adjustments will be made in future edits to ensure compatibility and freedom to use other data sets
+2. The user may choose to log transform either axis
+3. The axis label names may also be adjusted
+4. The table shown below the figure may be downloaded for future use and analysis and even used in the following tab for the [correlation rank plot]()
+
 
 
 ## Ranked Feature Correlation
