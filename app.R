@@ -1954,7 +1954,7 @@ server <- function(input, output, session) {
                              color = Type,
                              text = paste("</br> Type: ", Type,
                                           paste("</br> ",colnames(tsv)[1],": ", sep = ""),tsv[,1]))) +
-            geom_point(colour = "lightgray") +
+            geom_point() +
             theme_minimal() +
             labs(x = gs_x, y = gs_y,
                  title = paste(gs_x, " vs.\n", gs_y, sep = ''))
