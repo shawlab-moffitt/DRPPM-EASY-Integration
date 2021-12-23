@@ -2,6 +2,9 @@
 
 # Introduction
 
+This is an extention of the [DRPPM Expression Analysis ShinY (EASY) App](https://github.com/shawlab-moffitt/DRPPM-EASY-ExprAnalysisShinY) for further integration of result files and matrices comparison with differential gene expression and gene set enrichment analysis. Here we allow for the comparison of data sets such as from single sample GSEA and expression matrices. The comparison of expression data is one of the main features we elaborate on in this app. The user may upload two expression matrices, in our example we uploaded mRNA and Protein expression data, with their corresponding meta data. Through the functionality of the DRPPM-EASY-Integration app we are abloe to compare log fold change of the expression and generate gene sets of the significantly up regulated and down regulated genes. These gene set were further used for GSEA and ssGSEA on their opposing matrix to illustrate any similarity in gene regulation. Additionally, these gene set are further compared with GMT files of published gene sets from the Molecular Signatures Database (MSigDB) with corresponding statiistal calculations to rank their similarity, such as Fishers Exact Test, Cohen's Kappa, and the Jaccard Index. Below you may see a flow chart of the DRPPM-EASY pipeline, where this Integration app represents segment C.
+
+<img src="https://github.com/shawlab-moffitt/DRPPM-EASY-Integration/blob/main/App_Demo_Pictures/EASY_FlowChart.png" width="900">
 
 
 # Installation
