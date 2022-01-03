@@ -22,8 +22,8 @@ invisible(lapply(bioCpacks, library, character.only = TRUE))
 
 #Example Files
 
-examp_file1.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_APOPTOSIS.tsv"
-examp_file2.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_ANGIOGENESIS.tsv"
+examp_file1.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_RNAseq_HALLMARK_APOPTOSIS.tsv"
+examp_file2.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_RNAseq_HALLMARK_ANGIOGENESIS.tsv"
 
 examp_file1.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_APOPTOSIS.tsv"
 examp_file2.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_expr.txt"
