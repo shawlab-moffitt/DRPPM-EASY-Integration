@@ -22,22 +22,22 @@ invisible(lapply(bioCpacks, library, character.only = TRUE))
 
 #Example Files
 
-examp_file1.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_Myeloid-DerivedSuppressorCell_29108995.tsv"
-examp_file2.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
+examp_file1.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_APOPTOSIS.tsv"
+examp_file2.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_ANGIOGENESIS.tsv"
 
-examp_file1.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_H_PeripheralBlood_Normal_SuppressiveMonocyte_25799053.tsv"
-examp_file2.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/FredHutch_TPM_filter_transpose.filteredchrY.protein.max_1FPKM.txt"
+examp_file1.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_APOPTOSIS.tsv"
+examp_file2.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_expr.txt"
 
-examp_file3.R <- "~/R/DRPPM-EASY-Integration-main/ExampleData/htseq_gene_level_fpkm_T_geneName_max_1cutoff_v2.txt"
-examp_file3.RM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_meta.tsv"
-examp_file3.P <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_shRNA_A_max_psm_matrix_geneName.txt"
-examp_file3.PM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_shRNA_A_meta.txt"
+examp_file3.R <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_expr.txt"
+examp_file3.RM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_meta.txt"
+examp_file3.P <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_Proteomics_expr.txt"
+examp_file3.PM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_Proteomics_meta.txt"
 
 ##--file names--##
 #MSigDB GS and Category table
 MSigDBcat_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/msigdb_gsNcat_HS.tsv'
 #gene set list for ssGSEA
-GSlist_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/gs_list_HS.RData'
+GSlist_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/msigdb_gs_HS.RData'
 
 ##--read files--##
 #MSigDB gene sets FOR UI
