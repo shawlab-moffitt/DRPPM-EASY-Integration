@@ -32,7 +32,16 @@ This is an extention of the [DRPPM Expression Analysis ShinY (EASY) App](https:/
 | rhoR_1.3.0.3 | limma_3.48.3 | clusterProfiler_4.0.5 | limma_3.48.3 | GSVA_1.40.1 |
 | BiocManager_1.30.16 | reshape2_1.4.4 | ggpubr_0.4.0 |  |  |
 
-# Required Files
+# Required Files for User Input
+
+* **Expression Matrix (.tsv/.txt):**
+  * Must be tab delimited with gene names as symbols located in the first column with subsequent columns consiting of the sample name as the header and expression data down the column.
+  *  The current App expects lowly expressed genes filtered out and normalized data either to FPKM or TMM.
+     * Larger files might inflict memory issues for you local computer.
+* **Meta Data (.tsv/.txt):**
+  * Must be tab delimited with two columns. First column of sample names and second column as phenotype grouping of the samples
+
+# Required Files for Setup - Provided
 
 * **MSigDB Gene Set Names:**
   * These [gene set files](https://github.com/shawlab-moffitt/DRPPM-EASY-Integration/tree/main/GeneSets) were gathered from the [Molecular Signatures Database (MSigDB)](http://www.gsea-msigdb.org/gsea/msigdb/index.jsp) as separate collections and processed through R to generate a master gene set file with catagorical labels to use for GSEA and ssGSEA analysis.
