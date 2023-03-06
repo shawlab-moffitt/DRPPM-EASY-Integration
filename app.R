@@ -22,22 +22,22 @@ invisible(lapply(bioCpacks, library, character.only = TRUE))
 
 #Example Files
 
-examp_file1.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_RNAseq_HALLMARK_APOPTOSIS.tsv"
-examp_file2.s <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_RNAseq_HALLMARK_ANGIOGENESIS.tsv"
+examp_file1.s <- "ExampleData/ssGSEAscore_RNAseq_HALLMARK_APOPTOSIS.tsv"
+examp_file2.s <- "ExampleData/ssGSEAscore_RNAseq_HALLMARK_ANGIOGENESIS.tsv"
 
-examp_file1.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/ssGSEAscore_HALLMARK_APOPTOSIS.tsv"
-examp_file2.c <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_expr.txt"
+examp_file1.c <- "ExampleData/ssGSEAscore_HALLMARK_APOPTOSIS.tsv"
+examp_file2.c <- "ExampleData/USP7_RNAseq_expr.txt"
 
-examp_file3.R <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_expr.txt"
-examp_file3.RM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_RNAseq_meta.txt"
-examp_file3.P <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_Proteomics_expr.txt"
-examp_file3.PM <- "~/R/DRPPM-EASY-Integration-main/ExampleData/USP7_Proteomics_meta.txt"
+examp_file3.R <- "ExampleData/USP7_RNAseq_expr.txt"
+examp_file3.RM <- "ExampleData/USP7_RNAseq_meta.txt"
+examp_file3.P <- "ExampleData/USP7_Proteomics_expr.txt"
+examp_file3.PM <- "ExampleData/USP7_Proteomics_meta.txt"
 
 ##--file names--##
 #MSigDB GS and Category table
-MSigDBcat_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/msigdb_gsNcat_HS.tsv'
+MSigDBcat_file <- 'GeneSets/msigdb_gsNcat_HS.tsv'
 #gene set list for ssGSEA
-GSlist_file <- '~/R/DRPPM-EASY-Integration-main/GeneSets/msigdb_gs_HS.RData'
+GSlist_file <- 'GeneSets/msigdb_gs_HS.RData'
 
 ##--read files--##
 #MSigDB gene sets FOR UI
